@@ -1,5 +1,5 @@
 install_utils() {
-  sudo apt install --yes zip unzip 
+  sudo apt install --yes zip unzip ripgrep
   sudo apt-get install --yes build-essential zlib1g-dev libffi-dev libssl-dev libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev
 }
 
@@ -35,7 +35,7 @@ setup_neovim() {
   curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
   sudo rm -rf /opt/nvim
   sudo tar -C /opt -xzf nvim-linux64.tar.gz
-  sudo mv nvim-linux64 nvim
+  sudo mv /opt/nvim-linux64 /opt/nvim
   export PATH="$PATH:/opt/nvim/bin" ## This should already be in the .zshrc file which i pull from my github
 }
 
