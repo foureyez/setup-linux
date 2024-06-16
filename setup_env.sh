@@ -1,5 +1,5 @@
 install_utils() {
-  sudo apt install --yes zip unzip ripgrep
+  sudo apt install --yes zip unzip ripgrep xclip
   sudo apt-get install --yes build-essential zlib1g-dev libffi-dev libssl-dev libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev
 }
 
