@@ -1,3 +1,49 @@
+install_utils() {
+  . /etc/os-release
+
+case $ID in
+  ubuntu) 
+    sudo apt install --yes zip unzip ripgrep xclip kitty zsh
+    sudo apt-get install --yes build-essential zlib1g-dev libffi-dev libssl-dev libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev
+    ;;
+
+  arch) 
+    echo "Installing arch utils"
+    sudo pacman -Sy kitty zsh zip unzip ripgrep xclip 
+    ;;
+
+  centos) 
+    ;;
+
+  *) echo "This is an unknown distribution."
+      ;;
+esac
+}
+
+install_jackett() {
+  cd /opt
+  f=Jackett.Binaries.LinuxAMDx64.tar.gz && release=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep "title>Release" | cut -d " " -f 4) && sudo wget -Nc https://github.com/Jackett/Jackett/releases/download/$release/"$f"
+  sudo tar -xzf "$f"
+  sudo rm -f "$f"
+  cd Jackett*
+  sudo ./install_service_systemd.sh
+  systemctl status jackett.service 
+  cd 
+}
+
+setup_zsh() {
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+
+  # do not run this as root, root will be asked for if required
+  bash <(curl --proto '=https' --tlsv1.2 -sSf https://setup.atuin.sh)
+}
+
+setup_dotfiles() {
+  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin
+  $HOME/.local/bin/chezmoi init --apply foureyez
+}
+
 setup_golang() {
   echo "Insalling golang" 
   curl -L -O https://go.dev/dl/go1.22.3.linux-amd64.tar.gz
@@ -34,19 +80,28 @@ setup_nvim() {
   curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
   tar xf lazygit.tar.gz lazygit
   sudo install lazygit /usr/local/bin
+
+   curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
+   sudo rm -rf /opt/nvim
+   sudo tar -C /opt -xzf nvim-linux64.tar.gz
+   sudo mv /opt/nvim-linux64 /opt/nvim
+   export PATH="$PATH:/opt/nvim/bin" ## This should already be in the .zshrc file which i pull from my github
 }
 
 setup_fonts() {
   echo "Installing fonts" 
   curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/3270.zip
   unzip 3270.zip -d ~/.local/share/fonts/
+  rm 3270.zip
 
   curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip
-  unzip JetbrainsMono.zip -d ~/.local/share/fonts/
+  unzip JetBrainsMono.zip -d ~/.local/share/fonts/
+  rm JetBrainsMono.zip
   
 
   curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Terminus.zip
   unzip Terminus.zip -d ~/.local/share/fonts/
+  rm Terminus.zip
 }
 
 setup_workspace() {
@@ -63,8 +118,14 @@ setup_workspace() {
 }
 
 {
+  install_utils
+  install_jackett
+  setup_zsh
   setup_fonts
+  setup_dotfiles
   setup_golang
+  setup_python
+  setup_npm
   setup_rust
   setup_python
   setup_nvim
