@@ -1,4 +1,21 @@
-sudo pacman -S efitools 
-sudo mkdir -p /usr/share/secureboot/keys # Store all keys here 
-uuidgen --random > GUID.txt
-openssl req -newkey rsa:4096 -nodes -keyout PK.key -new -x509 -sha256 -days 3650 -subj "/CN=my Platform Key/" -out PK.crt
+# Install sbctl 
+sudo pacman -Sy sbctl
+
+sbctl status
+# You should see that sbctl is not installed and secure boot is disabled.
+# Then create your custom secure boot keys
+sbctl create-keys
+
+# Put the firmware in setup mode
+# SecureBoot should be disabled and type should be custom
+sbctl enroll-keys -m
+
+# Check which all images need signing 
+sbctl verify
+
+# Signed the unsigned images from earlier output
+sbctl sign -s /boot/vmlinuz-linux
+sbctl sign -s /boot/EFI/BOOT/BOOTX64.EFI
+
+# Reboot and enable secure boot 
+# Note: didn't work with GRUB, only with systemd-boot

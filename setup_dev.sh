@@ -1,3 +1,5 @@
+#!/bin/bash
+
 install_utils() {
   . /etc/os-release
 
@@ -9,7 +11,7 @@ case $ID in
 
   arch) 
     echo "Installing arch utils"
-    sudo pacman -Sy kitty zsh zip unzip ripgrep xclip 
+    sudo pacman -Sy kitty zsh zip unzip ripgrep xclip wget
     ;;
 
   centos) 
@@ -18,30 +20,6 @@ case $ID in
   *) echo "This is an unknown distribution."
       ;;
 esac
-}
-
-install_jackett() {
-  cd /opt
-  f=Jackett.Binaries.LinuxAMDx64.tar.gz && release=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep "title>Release" | cut -d " " -f 4) && sudo wget -Nc https://github.com/Jackett/Jackett/releases/download/$release/"$f"
-  sudo tar -xzf "$f"
-  sudo rm -f "$f"
-  cd Jackett*
-  sudo ./install_service_systemd.sh
-  systemctl status jackett.service 
-  cd 
-}
-
-setup_zsh() {
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-  curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-
-  # do not run this as root, root will be asked for if required
-  bash <(curl --proto '=https' --tlsv1.2 -sSf https://setup.atuin.sh)
-}
-
-setup_dotfiles() {
-  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin
-  $HOME/.local/bin/chezmoi init --apply foureyez
 }
 
 setup_golang() {
@@ -68,11 +46,13 @@ setup_python() {
 
 setup_npm() {
   echo "Insalling npm" 
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-  source ~/.zshrc
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash 
+  export NVM_DIR=$HOME/.config/nvm
+  source $NVM_DIR/nvm.sh
   nvm install --lts
   nvm use --lts
 }
+
 
 setup_nvim() {
   echo "Insalling lazygit" 
@@ -114,19 +94,18 @@ setup_workspace() {
   git clone git@github.com:foureyez/gofunme.git
   git clone git@github.com:foureyez/learn-rust.git
   git clone git@github.com:foureyez/adventofcode.git
+  git clone git@github.com:foureyez/linkbook.git
   cd 
 }
 
 {
   install_utils
-  install_jackett
-  setup_zsh
   setup_fonts
-  setup_dotfiles
   setup_golang
   setup_python
   setup_npm
   setup_rust
   setup_python
   setup_nvim
+  setup_workspace
 }
