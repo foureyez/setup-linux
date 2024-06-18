@@ -3,23 +3,36 @@
 install_utils() {
   . /etc/os-release
 
-case $ID in
-  ubuntu) 
-    sudo apt install --yes zip unzip ripgrep xclip kitty zsh
-    sudo apt-get install --yes build-essential zlib1g-dev libffi-dev libssl-dev libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev
-    ;;
-
-  arch) 
-    echo "Installing arch utils"
-    sudo pacman -Sy kitty zsh zip unzip ripgrep xclip wget
-    ;;
-
-  centos) 
-    ;;
-
-  *) echo "This is an unknown distribution."
+  case $ID in
+    ubuntu) 
+      sudo apt install --yes zip unzip ripgrep xclip kitty zsh
+      sudo apt-get install --yes build-essential zlib1g-dev libffi-dev libssl-dev libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev
       ;;
-esac
+
+    arch) 
+      echo "Installing arch utils"
+      sudo pacman -Sy kitty zsh zip unzip ripgrep xclip wget
+      ;;
+
+    *) echo "This is an unknown distribution."
+        ;;
+  esac
+}
+
+install_hyprland() {
+  . /etc/os-release
+  case $ID in
+    ubuntu) 
+      ;;
+
+    arch) 
+      echo "Installing arch hyprland"
+      yay -Sy hyprland-git
+      ;;
+
+    *) echo "This is an unknown distribution."
+      ;;
+  esac
 }
 
 setup_golang() {

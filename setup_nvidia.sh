@@ -1,10 +1,6 @@
 # Source: https://github.com/korvahannu/arch-nvidia-drivers-installation-guide
 sudo pacman -S base-devel linux-headers git nano --needed
 
-# Install yay
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg -si
 
 sudo nano /etc/pacman.conf
 #Uncomment the following lines  
