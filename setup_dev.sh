@@ -19,22 +19,6 @@ install_utils() {
   esac
 }
 
-install_hyprland() {
-  . /etc/os-release
-  case $ID in
-    ubuntu) 
-      ;;
-
-    arch) 
-      echo "Installing arch hyprland"
-      yay -Sy hyprland-git
-      ;;
-
-    *) echo "This is an unknown distribution."
-      ;;
-  esac
-}
-
 setup_golang() {
   echo "Insalling golang" 
   curl -L -O https://go.dev/dl/go1.22.3.linux-amd64.tar.gz
