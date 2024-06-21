@@ -11,7 +11,7 @@ install_utils() {
 
     arch) 
       echo "Installing arch utils"
-      sudo pacman -Sy kitty zsh zip unzip ripgrep xclip wget
+      sudo pacman -Sy kitty zsh zip unzip ripgrep xclip wget obsidian
       ;;
 
     *) echo "This is an unknown distribution."
